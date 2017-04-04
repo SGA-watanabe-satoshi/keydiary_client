@@ -21,9 +21,10 @@ export function activate(context: vscode.ExtensionContext) {
 
         // Display a message box to the user
         vscode.window.showInformationMessage('Hello World!');
+ 
+        // httpclient sample
         let client = new httpClient.HttpClinet();
-        client.send({message:'Hello World!'});
-
+        client.send([]);
     });
 
     context.subscriptions.push(disposable);

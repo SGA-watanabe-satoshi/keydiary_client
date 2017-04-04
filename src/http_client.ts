@@ -2,6 +2,7 @@
 import request = require('request');
 import {IncomingMessage} from 'http';
 import * as vscode from 'vscode';
+import * as model from './model';
 
 export class HttpClinet {
 
@@ -17,16 +18,19 @@ export class HttpClinet {
         this._userEmail = <string>vscode.workspace.getConfiguration().get('keydiary.email');
     }
 
-    public send(data:any){
+    public send(datas:model.DataModel[]){
+        for(let row of datas){
+            row.UserID = this._userEmail;
+        }
+
         let options  = {
             url: this.host,
             method: 'POST',
             headers: this._header,
             json: true,
-            from: data
+            from: datas
         }
         let proxy = vscode.workspace.getConfiguration().get('http.proxy');        
-        data['UserID'] = this._userEmail;
 
         if(proxy){
             options['proxy'] = proxy;
