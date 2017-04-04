@@ -1,6 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the necessary extensibility types to use in your code below
-import {window, commands, Disposable, ExtensionContext, StatusBarAlignment, StatusBarItem, TextDocument} from 'vscode';
+import { window, commands, Disposable, ExtensionContext, StatusBarAlignment, StatusBarItem, TextDocument } from 'vscode';
+import crypto = require('crypto');
 
 // This method is called when your extension is activated. Activation is
 // controlled by the activation events defined in package.json.
@@ -22,6 +23,8 @@ export function activate(context: ExtensionContext) {
 class WordCounter {
 
     private _statusBarItem: StatusBarItem;
+    private _shasum = crypto.createHash('sha1');
+    private _fileHash: string;
 
     public updateWordCount() {
 
@@ -42,13 +45,27 @@ class WordCounter {
         // Only update status if an Markdown file
         if (doc.languageId === "markdown") {
             let wordCount = this._getWordCount(doc);
-
+            if(!this._fileHash){
+                this._shasum.update(doc.fileName);
+                this._fileHash = this._shasum.digest('hex');
+            }
             // Update the status bar
-            this._statusBarItem.text = wordCount !== 1 ? `${wordCount} Words` : '1 Word';
+            this._statusBarItem.text =
+                this.createDisplayText(wordCount, doc.languageId, doc.getText().length);
+                console.log(this._statusBarItem.text);
             this._statusBarItem.show();
-        } else { 
+        } else {
             this._statusBarItem.hide();
         }
+    }
+
+    private createDisplayText(wordCount: number, languageId: string, charCount: number): string {
+        let languageText = `language: ${languageId}`;
+        let wordCountText = wordCount !== 1 ? `${wordCount} Words` : '1 Word';
+        let charCountText = `${charCount} Characters`;
+        let timeStampText = `${new Date().toISOString()}`;
+        let fileNameHashText = this._fileHash;
+        return `${languageText} ${wordCountText} ${charCountText} ${timeStampText} ${fileNameHashText}`;
     }
 
     public _getWordCount(doc: TextDocument): number {
@@ -97,6 +114,7 @@ class WordCounterController {
     }
 
     private _onEvent() {
+        console.log("receive events");
         this._wordCounter.updateWordCount();
     }
 }
