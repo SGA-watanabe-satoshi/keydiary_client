@@ -12,14 +12,11 @@ export function activate(context: ExtensionContext) {
 
     // create a new word counter
     let wordCounter = new WordCounter();
-
-    var disposable = commands.registerCommand('extension.sayHello', () => {
-        wordCounter.updateWordCount();
-    });
+    let controller = new WordCounterController(wordCounter);
 
     // Add to a list of disposables which are disposed when this extension is deactivated.
     context.subscriptions.push(wordCounter);
-    context.subscriptions.push(disposable);
+    context.subscriptions.push(controller);
 }
 
 class WordCounter {
@@ -71,5 +68,35 @@ class WordCounter {
 
     dispose() {
         this._statusBarItem.dispose();
+    }
+}
+
+class WordCounterController {
+
+    private _wordCounter: WordCounter;
+    private _disposable: Disposable;
+
+    constructor(wordCounter: WordCounter) {
+        this._wordCounter = wordCounter;
+        this._wordCounter.updateWordCount();
+
+        // subscribe to selection change and editor activation events
+        let subscriptions: Disposable[] = [];
+        window.onDidChangeTextEditorSelection(this._onEvent, this, subscriptions);
+        window.onDidChangeActiveTextEditor(this._onEvent, this, subscriptions);
+
+        // update the counter for the current file
+        this._wordCounter.updateWordCount();
+
+        // create a combined disposable from both event subscriptions
+        this._disposable = Disposable.from(...subscriptions);
+    }
+
+    dispose() {
+        this._disposable.dispose();
+    }
+
+    private _onEvent() {
+        this._wordCounter.updateWordCount();
     }
 }
