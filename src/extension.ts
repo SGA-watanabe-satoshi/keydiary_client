@@ -2,6 +2,8 @@
 // Import the necessary extensibility types to use in your code below
 import { window, commands, Disposable, ExtensionContext, StatusBarAlignment, StatusBarItem, TextDocument } from 'vscode';
 import crypto = require('crypto');
+import * as httpClient from './http_client';
+
 
 // This method is called when your extension is activated. Activation is
 // controlled by the activation events defined in package.json.
