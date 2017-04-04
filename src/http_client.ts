@@ -27,8 +27,7 @@ export class HttpClinet {
             url: this.host,
             method: 'POST',
             headers: this._header,
-            json: true,
-            from: datas
+            json: datas
         }
         let proxy = vscode.workspace.getConfiguration().get('http.proxy');        
 
