@@ -29,13 +29,13 @@ export class HttpClinet {
             headers: this._header,
             json: datas
         }
-        let proxy = vscode.workspace.getConfiguration().get('http.proxy');        
+        let proxy = vscode.workspace.getConfiguration().get('http.proxy');
 
         if(proxy){
             options['proxy'] = proxy;
             let strictSSL : boolean = <any>vscode.workspace.getConfiguration().get('http.proxyStrictSSL');
             if (strictSSL === true) {
-                options['strictSSL'] = strictSSL;                
+                options['strictSSL'] = strictSSL;
             }
         }
 
