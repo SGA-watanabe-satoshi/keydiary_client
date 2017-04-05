@@ -43,10 +43,14 @@ export class HttpClinet {
     }
 
     sendCallback = (error: any, response: IncomingMessage, body) => {
-        if(response.statusCode == 200){
-            console.log(`Communication was successful.`);
+        if(response){
+            if(response.statusCode == 200){
+                console.log(`Communication was successful.`);
+            }else{
+                console.error(`Communication to the host (${this.host}) failed: ${response.statusCode}`);
+            }
         }else{
-            console.error(`Communication to the host (${this.host}) failed: ${response.statusCode}`);
+            console.error(`unknown error has occurred: ${error}`);
         }
     }
 }
