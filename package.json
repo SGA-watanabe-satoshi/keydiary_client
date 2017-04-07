@@ -11,7 +11,7 @@
         "Other"
     ],
     "activationEvents": [
-        "onLanguage:markdown"
+        "*"
     ],
     "main": "./out/src/extension",
     "scripts": {
