@@ -45,8 +45,8 @@ class WordCounter {
 
         let doc = editor.document;
 
-        // Only update status if an Markdown file
-        if (doc.languageId === "markdown") {
+        // Only update status if supported language
+        if (this._isSupportedLanguage(doc.languageId)) {
             let wordCount = this._getWordCount(doc);
             if (!this._fileHash) {
                 this._shasum.update(doc.fileName);
@@ -61,6 +61,12 @@ class WordCounter {
         } else {
             this._statusBarItem.hide();
         }
+    }
+
+    private _isSupportedLanguage(languageId: string): boolean {
+        // all languages are supported
+        // languageId is "praintext" if unknown file extension
+        return true;
     }
 
     private _addEvent(wordCount: number, languageId: string, charCount: number) {
@@ -120,7 +126,7 @@ class WordCounterController {
         window.onDidChangeTextEditorSelection(this._onEvent, this, subscriptions);
         window.onDidChangeActiveTextEditor(this._onEvent, this, subscriptions);
         workspace.onDidCloseTextDocument(this._onCloseEvent, this, subscriptions);
-        
+
         // update the counter for the current file
         this._wordCounter.updateWordCount();
 
